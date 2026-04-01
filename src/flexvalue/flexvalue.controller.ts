@@ -10,7 +10,7 @@ export class FlexvalueController {
 
 
   @Get()
-  getHello(): string {
+  getHello(): any {
     return this.appService.getHello();
   }
 
