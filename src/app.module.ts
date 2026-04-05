@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver, defineConfig } from '@mikro-orm/postgresql';
 import { BudgetsModule } from './budgets/budgets.module';
-import { FlexvalueModule } from './flexvalue/flexvalue.module';
+import { FlexvalueModule } from './flexvalue/flex-value.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';

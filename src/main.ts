@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +14,15 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   await app.listen(port);
    
+
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // loại bỏ field thừa
+      forbidNonWhitelisted: true, // báo lỗi nếu có field lạ
+      transform: true, // auto convert type (string → number)
+    }),
+  );
 
   console.log(`App running on http://localhost:${port}`);
 }
