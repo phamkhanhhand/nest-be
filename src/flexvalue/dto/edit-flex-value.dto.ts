@@ -1,11 +1,14 @@
 import { IsOptional, IsString, IsNumber } from 'class-validator';
 
-export class CreateFlexValueDto {
+export class EditFlexValueDto {
 
   @IsOptional()
   @IsNumber()
   flexValueSetId?: number;
 
+  @IsNumber()
+  flexValueId?: number;
+  
   @IsOptional()
   @IsString()
   flexValue?: string;

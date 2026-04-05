@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { FlexvalueService } from './flex-value.service';
-import { CreateFlexValueDto } from './dto/create-flex-value.dto';
+import { EditFlexValueDto } from './dto/edit-flex-value.dto';
+import { PagingDto } from 'src/shared/dto/paging.dto';
 
 @Controller('flex-value')
 export class FlexvalueController {
@@ -17,8 +18,14 @@ export class FlexvalueController {
 
 
   @Post()
-  create(@Body() dto: CreateFlexValueDto) {
-    return this.flexValueService.create(dto);
+  save(@Body() dto: EditFlexValueDto) {
+    return this.flexValueService.save(dto);
+  }
+
+
+  @Get()
+  getPaging(@Query() query: PagingDto) {
+    return this.flexValueService.getPagingFlexValue(query);
   }
 
 }

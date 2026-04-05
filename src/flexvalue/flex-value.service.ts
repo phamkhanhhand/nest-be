@@ -3,18 +3,37 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/core';
 import { FlexValues } from './flex-values.entity';
 import { FlexValuesRepository } from './flex-value.repository';
-import { CreateFlexValueDto } from './dto/create-flex-value.dto';
+import { EditFlexValueDto } from './dto/edit-flex-value.dto';
 import { EntityManager } from '@mikro-orm/postgresql';
+import { BaseService } from 'src/shared/base.service';
+import { PagingDto } from 'src/shared/dto/paging.dto';
 
 @Injectable()
-export class FlexvalueService {
+export class FlexvalueService extends BaseService {
 
   constructor(
-    private readonly em: EntityManager,
+      readonly em: EntityManager,
     @InjectRepository(FlexValues)
     private readonly flexvalueRepository: EntityRepository<FlexValues>,
     private readonly flexValuesRepositoryImpl: FlexValuesRepository,
-  ) { }
+  ) { 
+
+    
+    super(em);
+  }
+ 
+  async getPagingFlexValue(query: PagingDto) {
+    return super.getPaging(
+      FlexValues,
+      {}, // filter
+      query.page,
+      query.pageSize,
+      {
+        orderBy: { flexValueId: 'desc' },
+      }
+    );
+  }
+
 
   async getBySetId(setId: number): Promise<any> {
 
@@ -33,10 +52,19 @@ export class FlexvalueService {
   //   return await this.flexvalueRepository.findAll();
   // }
 
+async save(dto: EditFlexValueDto) {
 
-  async create(dto: CreateFlexValueDto) {
+  // 👉 UPDATE
+  if (dto.flexValueId) {
+    const id = dto.flexValueId;
 
-    const entity = this.em.create(FlexValues, {
+    const entity = await this.em.findOne(FlexValues, { flexValueId: id });
+
+    if (!entity) {
+      throw new Error('FlexValue not found');
+    }
+
+    this.em.assign(entity, {
       flexValueSetId: dto.flexValueSetId?.toString(),
       flexValue: dto.flexValue,
       flexValueName: dto.flexValueName,
@@ -44,16 +72,33 @@ export class FlexvalueService {
       period: dto.period,
       description: dto.description,
 
-      editVersion: new Date(), // NOT NULL
-
-      createdBy: 'system', // hoặc lấy từ user login
-      createdDate: new Date(),
-
+      editVersion: new Date(),
+      modifiedBy: 'system',
+      modifiedDate: new Date(),
     });
 
-    await this.em.persistAndFlush(entity);
+    await this.em.flush();
 
     return entity;
   }
+
+  // 👉 INSERT
+  const entity = this.em.create(FlexValues, {
+    flexValueSetId: dto.flexValueSetId?.toString(),
+    flexValue: dto.flexValue,
+    flexValueName: dto.flexValueName,
+    enableFlag: dto.enableFlag,
+    period: dto.period,
+    description: dto.description,
+
+    editVersion: new Date(),
+    createdBy: 'system',
+    createdDate: new Date(),
+  });
+
+  await this.em.persistAndFlush(entity);
+
+  return entity;
+}
 
 }

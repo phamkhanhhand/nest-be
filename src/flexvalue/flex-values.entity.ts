@@ -17,7 +17,7 @@ import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 export class FlexValues {
 
   @PrimaryKey({ fieldName: 'flex_value_id', type: 'bigint' })
-  flexValueId!: string;
+  flexValueId!: number;
 
   @Property({ fieldName: 'flex_value_set_id', type: 'bigint', nullable: true })
   flexValueSetId?: string;
