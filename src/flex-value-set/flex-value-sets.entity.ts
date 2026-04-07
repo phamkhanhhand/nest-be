@@ -10,6 +10,8 @@ export class FlexValueSets {
 
   @Property({ fieldName: 'flex_value_set_name', length: 500, nullable: true })
   flexValueSetName?: string;
+  @Property({ fieldName: 'flex_value_set_code', length: 256, nullable: true })
+  flexValueSetCode?: string;
 
   @Property({ fieldName: 'enable_flag', length: 10, nullable: true })
   enableFlag?: string;
