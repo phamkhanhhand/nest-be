@@ -33,7 +33,7 @@ export class FlexValueSetService extends BaseService {
   }
 
   async getByID(id: number): Promise<any> {
-    return (await this.flexValuesRepositoryImpl.getByIdRaw(id)).find((item: any) => item.flex_value_set_id === id);
+    return (await this.flexValuesRepositoryImpl.getByIdRaw(id)).find((item: any) => item.flexValueSetId === id);
   }
 
   async save(dto: EditFlexValueSetDto) {
