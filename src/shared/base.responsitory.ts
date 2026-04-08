@@ -1,4 +1,4 @@
-import {  EntityName } from '@mikro-orm/core';
+import { EntityName } from '@mikro-orm/core';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 
 import { Injectable } from '@nestjs/common';
@@ -15,19 +15,19 @@ export class BaseRepository<T> {
   constructor(
     protected readonly em: EntityManager,
     // protected readonly entity: EntityName<T>,
-    protected readonly entity: { new (): T }
-  ) {}
+    protected readonly entity: { new(): T }
+  ) { }
 
-protected getMeta() {
-  return this.em.getMetadata().get(this.entity.name);
-}
- 
+  protected getMeta() {
+    return this.em.getMetadata().get(this.entity.name);
+  }
+
 
   // =========================
   // 🔥 CORE: RAW → ENTITY MAP
   // =========================
   protected mapRawToEntity(raw: any): T {
-    const meta = this.getMeta();  
+    const meta = this.getMeta();
     const mapped: any = {};
 
     for (const prop of Object.values(meta.properties)) {
@@ -38,13 +38,29 @@ protected getMeta() {
 
       let value = raw[fieldName];
 
+
+      const columnType = prop.type?.toLowerCase();
+
+
       // handle bigint
-      if (prop.type === 'bigint' && value != null) {
+      if (
+
+        (
+
+          columnType?.includes('int') ||   // int2, int4, int8
+          columnType?.includes('numeric') ||
+          columnType?.includes('decimal') ||
+
+          prop.type === 'bigint'
+           || prop.type === 'bigintsmall'
+           || prop.type === 'number'
+           || prop.type === 'decimal'
+           || prop.type === 'BigInt') && value != null) {
         value = Number(value);
       }
 
       // handle date
-      if (prop.type === 'Date' && value) {
+      if ((prop.type === 'Date' || prop.type === 'datetime' || prop.type === 'date') && value) {
         value = new Date(value);
       }
 
