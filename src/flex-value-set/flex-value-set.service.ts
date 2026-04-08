@@ -21,9 +21,19 @@ export class FlexValueSetService extends BaseService {
   }
 
   async getPagingFlexValue(query: PagingDto) {
+
+  const filter: any = {};
+
+  if (query.searchValue) {
+    filter.$or = [
+      { flexValueSetCode: { $ilike: `%${query.searchValue}%` } },
+      { flexValueSetName: { $ilike: `%${query.searchValue}%` } },
+    ];
+  }
+
     return super.getPaging(
       FlexValueSets,
-      {}, // filter
+    filter,
       query.page,
       query.pageSize,
       {
@@ -81,15 +91,15 @@ export class FlexValueSetService extends BaseService {
 
     return entity;
   }
- 
-  async delete(id: number): Promise<void> {
-  const deleted = await this.em.nativeDelete(FlexValueSets, {
-    flexValueSetId: id,
-  });
 
-  if (!deleted) {
-    throw new Error('FlexValueSet not found');
+  async delete(id: number): Promise<void> {
+    const deleted = await this.em.nativeDelete(FlexValueSets, {
+      flexValueSetId: id,
+    });
+
+    if (!deleted) {
+      throw new Error('FlexValueSet not found');
+    }
   }
-}
 
 }

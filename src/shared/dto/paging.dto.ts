@@ -14,4 +14,10 @@ export class PagingDto {
   @IsNumber()
   @Min(1)
   pageSize: number = 10;
+
+
+
+  @IsOptional()
+  @Type(() => String)
+  searchValue: string
 }
