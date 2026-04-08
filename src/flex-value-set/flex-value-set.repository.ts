@@ -17,7 +17,7 @@ export class FlexValueSetRepository extends BaseRepository<FlexValueSets>
 
 
   async getByIdRaw(id: number): Promise<FlexValueSets[]> {
-    return this.executeMapped(
+    var rs = this.executeMapped(
       `
       
       SELECT a.*
@@ -26,6 +26,8 @@ export class FlexValueSetRepository extends BaseRepository<FlexValueSets>
       `,
       [id]
     );
+    
+    return rs;
   }
 
 

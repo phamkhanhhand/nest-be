@@ -81,8 +81,15 @@ export class FlexValueSetService extends BaseService {
 
     return entity;
   }
+ 
+  async delete(id: number): Promise<void> {
+  const deleted = await this.em.nativeDelete(FlexValueSets, {
+    flexValueSetId: id,
+  });
 
-  async delete(id: number): Promise<any> {
-    // return this.flexValuesRepositoryImpl.delete(id);
+  if (!deleted) {
+    throw new Error('FlexValueSet not found');
   }
+}
+
 }

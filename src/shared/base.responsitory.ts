@@ -47,20 +47,23 @@ export class BaseRepository<T> {
 
         (
 
-          columnType?.includes('int') ||   // int2, int4, int8
-          columnType?.includes('numeric') ||
-          columnType?.includes('decimal') ||
+          // columnType?.includes('int') ||   // int2, int4, int8
+          // columnType?.includes('numeric') ||
+          // columnType?.includes('decimal') ||
 
-          prop.type === 'bigint'
-           || prop.type === 'bigintsmall'
-           || prop.type === 'number'
+          // prop.type === 'bigint'
+          //  || prop.type === 'biginttype'
+             prop.type === 'number'
            || prop.type === 'decimal'
            || prop.type === 'BigInt') && value != null) {
         value = Number(value);
       }
 
       // handle date
-      if ((prop.type === 'Date' || prop.type === 'datetime' || prop.type === 'date') && value) {
+      if ((prop.type === 'Date' 
+       // || prop.type === 'datetime'
+        //  || prop.type === 'date'
+        ) && value) {
         value = new Date(value);
       }
 
