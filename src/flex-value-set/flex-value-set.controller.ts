@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/commo
 import { FlexValueSetService } from './flex-value-set.service';
 import { EditFlexValueSetDto } from './dto/edit-flex-value-set.dto';
 import { PagingDto } from 'src/shared/dto/paging.dto';
-import { EditFlexValueDto } from 'src/flex-value/dto/edit-flex-value.dto';
+// import { EditFlexValueDto } from 'src/flex-value/dto/edit-flex-value.dto';
 
 @Controller('flex-value-set')
 export class FlexValueSetController {
@@ -19,7 +19,7 @@ export class FlexValueSetController {
   @Get(':id') 
   getById(@Param('id') id: number): any {
   // getBySetId(setId: number): any {
-    return this.flexValueSetService.getByID(id);
+    return this.flexValueSetService.getById(id);
   }
 
 
@@ -33,6 +33,12 @@ export class FlexValueSetController {
     return this.flexValueSetService.delete(id);
   }
 
+
+  @Get('detail/:id') 
+  getByIdWithDetail(@Param('id') id: number): any {
+  // getBySetId(setId: number): any {
+    return this.flexValueSetService.getByIDWithDetail(id);
+  }
 
 
 }

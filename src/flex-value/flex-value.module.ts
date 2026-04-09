@@ -11,6 +11,6 @@ import { FlexValuesRepository } from './flex-value.repository';
   ],
   controllers: [FlexvalueController],
   providers: [FlexvalueService, FlexValuesRepository],
-  exports: [FlexvalueService],
+  exports: [FlexvalueService, FlexValuesRepository],
 })
 export class FlexvalueModule {}

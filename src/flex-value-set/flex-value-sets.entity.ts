@@ -1,4 +1,5 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { FlexValues } from 'src/flex-value/flex-values.entity';
  
 
 @Entity({ tableName: 'adm_flex_value_sets', schema: 'bud' })
@@ -39,4 +40,8 @@ export class FlexValueSets {
   // time (chỉ giờ phút giây)
   @Property({ fieldName: 'modified_date', type: 'time', nullable: true })
   modifiedDate?: string; // ⚠️ dùng string (HH:mm:ss)
+
+
+
+  // detail: FlexValues[];
 }

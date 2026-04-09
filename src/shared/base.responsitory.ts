@@ -186,4 +186,25 @@ export class BaseRepository<T> {
       params,
     });
   }
+
+
+
+  //#region map dto
+  protected snakeToCamel(str: string): string {
+    return str.replace(/_([a-z])/g, (_, char) => char.toUpperCase());
+  }
+
+  async mapToDto<T>(row: any): Promise<T> {
+    const result: any = {};
+
+    Object.keys(row).forEach(key => {
+      const camelKey = this.snakeToCamel(key);
+      result[camelKey] = row[key];
+    });
+
+    return result as T;
+  }
+
+
+  //#endregion
 }

@@ -1,4 +1,5 @@
 import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { FlexValues } from 'src/flex-value/flex-values.entity';
 
 export class EditFlexValueSetDto {
 
@@ -28,4 +29,6 @@ export class EditFlexValueSetDto {
   description?: string;
 
   // có thể thêm attribute nếu cần
+
+  detail:any[];
 }

@@ -10,7 +10,7 @@ export class FlexValuesRepository //extends EntityRepository<FlexValues>
   constructor(private readonly em: EntityManager) {}
 
 
-  async getBySetIdRaw(setId: number) {
+  public async getBySetIdRaw(setId: number) {
     const em = this.em;
 
     return em.execute(`

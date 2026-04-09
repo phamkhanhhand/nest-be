@@ -7,6 +7,9 @@ import { BaseService } from 'src/shared/base.service';
 import { PagingDto } from 'src/shared/dto/paging.dto';
 import { FlexValueSets } from './flex-value-sets.entity';
 import { FlexValueSetRepository } from './flex-value-set.repository';
+import { FlexValuesRepository } from 'src/flex-value/flex-value.repository';
+import { FlexValues } from 'src/flex-value/flex-values.entity';
+// import { FlexValues } from 'src/flex-value/flex-values.entity';
 
 @Injectable()
 export class FlexValueSetService extends BaseService {
@@ -15,25 +18,26 @@ export class FlexValueSetService extends BaseService {
     readonly em: EntityManager,
     @InjectRepository(FlexValueSets)
     private readonly flexvalueRepository: EntityRepository<FlexValueSets>,
-    private readonly flexValuesRepositoryImpl: FlexValueSetRepository,
+    private readonly flexValuesSetRepositoryImpl: FlexValueSetRepository,
+    private readonly flexValuesRepositoryImpl: FlexValuesRepository,
   ) {
     super(em);
   }
 
   async getPagingFlexValue(query: PagingDto) {
 
-  const filter: any = {};
+    const filter: any = {};
 
-  if (query.searchValue) {
-    filter.$or = [
-      { flexValueSetCode: { $ilike: `%${query.searchValue}%` } },
-      { flexValueSetName: { $ilike: `%${query.searchValue}%` } },
-    ];
-  }
+    if (query.searchValue) {
+      filter.$or = [
+        { flexValueSetCode: { $ilike: `%${query.searchValue}%` } },
+        { flexValueSetName: { $ilike: `%${query.searchValue}%` } },
+      ];
+    }
 
     return super.getPaging(
       FlexValueSets,
-    filter,
+      filter,
       query.page,
       query.pageSize,
       {
@@ -42,8 +46,27 @@ export class FlexValueSetService extends BaseService {
     );
   }
 
-  async getByID(id: number): Promise<any> {
-    return (await this.flexValuesRepositoryImpl.getByIdRaw(id)).find((item: any) => item.flexValueSetId === id);
+   async getByIDWithDetail(id: number): Promise<any> {
+    var masterDto = (await  this.flexValuesSetRepositoryImpl.getByIdRawDto(id));
+
+    //list detail
+    var detail = (await this.flexValuesRepositoryImpl.getBySetIdRaw(id) as FlexValues[]);
+
+    masterDto.detail =  detail;
+
+    return masterDto;
+  }
+
+
+
+  async getById(id: number): Promise<any> {
+    var master = (await this.flexValuesSetRepositoryImpl.getByIdRaw(id));
+ 
+    //list detail
+    var detail = (await this.flexValuesRepositoryImpl.getBySetIdRaw(id) as FlexValues[]);
+ 
+
+    return master;
   }
 
   async save(dto: EditFlexValueSetDto) {
@@ -101,5 +124,20 @@ export class FlexValueSetService extends BaseService {
       throw new Error('FlexValueSet not found');
     }
   }
+
+  getByIDWithDetail1(id: number): Promise<any> {
+  return Promise.all([
+    this.flexValuesSetRepositoryImpl.getByIdRawDto(id),
+    this.flexValuesRepositoryImpl.getBySetIdRaw(id)
+  ])
+  .then(([masterDto, detail]) => {
+
+    if (!masterDto) return null;
+
+    masterDto.detail = detail;
+    return masterDto;
+  });
+}
+
 
 }
