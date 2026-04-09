@@ -101,4 +101,19 @@ async save(dto: EditFlexValueDto) {
   return entity;
 }
 
+
+  async getByID(id: number): Promise<any> {
+    // return (await this.flexValuesRepositoryImpl.getByIdRaw(id)).find((item: any) => item.flexValueSetId === id);
+  }
+  async delete(id: number): Promise<void> {
+    const deleted = await this.em.nativeDelete(FlexValues, {
+      flexValueId: id,
+    });
+
+    if (!deleted) {
+      throw new Error('FlexValueSet not found');
+    }
+  }
+
+
 }
