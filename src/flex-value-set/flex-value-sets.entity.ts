@@ -24,8 +24,8 @@ export class FlexValueSets {
   description?: string;
 
   // timestamp
-  @Property({ fieldName: 'edit_version', type: 'Date' })
-  editVersion!: Date;
+  @Property({ fieldName: 'edit_version', type: 'Date' ,nullable: true })
+  editVersion?: Date;
 
   @Property({ fieldName: 'created_by', length: 255, nullable: true })
   createdBy?: string;

@@ -1,16 +1,5 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
  
-
-// export class FlexValue {
-//   @PrimaryKey()
-//   id: number;
-
-//   @Property()
-//   flexvalue: string;
-
-//   @Property()
-//   flexvaluename: string;
-// }
  
 
 @Entity({ tableName: 'adm_flex_values', schema: 'bud' })
@@ -20,7 +9,7 @@ export class FlexValues {
   flexValueId!: number;
 
   @Property({ fieldName: 'flex_value_set_id', type: 'bigint', nullable: true })
-  flexValueSetId?: string;
+  flexValueSetId?: number;
 
   @Property({ fieldName: 'flex_value', length: 500, nullable: true })
   flexValue?: string;
@@ -37,8 +26,8 @@ export class FlexValues {
   @Property({ fieldName: 'description', length: 500, nullable: true })
   description?: string;
 
-  @Property({ fieldName: 'edit_version', type: 'Date' })
-  editVersion!: Date;
+  @Property({ fieldName: 'edit_version', type: 'Date' ,nullable: true })
+  editVersion?: Date;
 
   @Property({ fieldName: 'created_by', length: 255, nullable: true })
   createdBy?: string;

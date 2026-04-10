@@ -41,7 +41,7 @@ export class FlexvalueService extends BaseService {
     
 
     return this.flexvalueRepository.find(
-      { flexValueSetId: setId.toString() },
+      { flexValueSetId: setId },
       { orderBy: { flexValueId: 'ASC' } }
     );
 
@@ -65,7 +65,7 @@ async save(dto: EditFlexValueDto) {
     }
 
     this.em.assign(entity, {
-      flexValueSetId: dto.flexValueSetId?.toString(),
+      flexValueSetId: dto.flexValueSetId,
       flexValue: dto.flexValue,
       flexValueName: dto.flexValueName,
       enableFlag: dto.enableFlag,
@@ -84,7 +84,7 @@ async save(dto: EditFlexValueDto) {
 
   // 👉 INSERT
   const entity = this.em.create(FlexValues, {
-    flexValueSetId: dto.flexValueSetId?.toString(),
+    flexValueSetId: dto.flexValueSetId,
     flexValue: dto.flexValue,
     flexValueName: dto.flexValueName,
     enableFlag: dto.enableFlag,
