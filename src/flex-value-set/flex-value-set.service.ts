@@ -133,6 +133,7 @@ export class FlexValueSetService extends BaseService {
         if (detailEntity) {
           this.em.assign(detailEntity, {
             flexValue: d.flexValue,
+            flexValueName: d.flexValueName,
             description: d.description,
             editVersion: new Date(),
           });
@@ -141,6 +142,7 @@ export class FlexValueSetService extends BaseService {
           detailEntity = this.em.create(FlexValues, {
             flexValueSetId: entity.flexValueSetId,
             flexValue: d.flexValue,
+            flexValueName: d.flexValueName,
             description: d.description,
             editVersion: new Date(),
           });
@@ -153,6 +155,7 @@ export class FlexValueSetService extends BaseService {
         detailEntity = this.em.create(FlexValues, {
           flexValueSetId: entity.flexValueSetId,
           flexValue: d.flexValue,
+            flexValueName: d.flexValueName,
           description: d.description,
           editVersion: new Date(),
         });
