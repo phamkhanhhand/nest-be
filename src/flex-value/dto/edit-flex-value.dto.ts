@@ -1,6 +1,7 @@
 import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { BaseEntityDto } from 'src/shared/dto/baseEntity.dto';
 
-export class EditFlexValueDto {
+export class EditFlexValueDto extends BaseEntityDto {
 
   @IsOptional()
   @IsNumber()

@@ -13,6 +13,7 @@ import { EditFlexHierachyDto } from './dto/edit-flex-hierachy.dto';
 import { FlexHierarchySet } from './flex-hierachy-set.entity';
 import { isEmptyString } from 'src/shared/utils';
 import { FlexHierachyListForSetupDto } from './dto/flex-hierachy-list-for-setup.dto';
+import { ENTITY_STATE } from 'src/shared/enum';
 
 @Injectable()
 export class FlexValueSetService extends BaseService {
@@ -124,6 +125,11 @@ export class FlexValueSetService extends BaseService {
     for (const d of detail) {
       let detailEntity;
 
+      if(d.entityState == ENTITY_STATE.DELETE){
+        continue;
+      }
+
+      
       if (d.flexValueId) {
         // 👉 UPDATE
         detailEntity = await this.em.findOne(FlexValues, {
