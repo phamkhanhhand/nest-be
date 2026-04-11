@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/commo
 import { FlexValueSetService } from './flex-value-set.service';
 import { EditFlexValueSetDto } from './dto/edit-flex-value-set.dto';
 import { PagingDto } from 'src/shared/dto/paging.dto'; 
+import { EditFlexHierachyDto } from './dto/edit-flex-hierachy.dto';
 
 @Controller('flex-value-set')
 export class FlexValueSetController {
@@ -36,6 +37,29 @@ export class FlexValueSetController {
   @Get('detail/:id') 
   getByIdWithDetail(@Param('id') id: number): any { 
     return this.flexValueSetService.getByIDWithDetail(id);
+  }
+ 
+  
+  @Get("getPagingAllForLink/:id")
+  getPagingAllSetForLink(@Query() query: PagingDto,@Param('id') id: number) {
+    return this.flexValueSetService.getPagingAllSetForLink(query, id);
+  }
+
+
+  @Get("getPagingAllForLink/:id")
+  getPagingAllChildLinkSet(@Query() query: PagingDto,@Param('id') id: number) {
+    return this.flexValueSetService.getPagingAllChildLinkSet(query, id);
+  }
+
+  @Get("getPagingAllParentLinkSet/:id")
+  getPagingAllParentLinkSet(@Query() query: PagingDto,@Param('id') id: number) {
+    return this.flexValueSetService.getPagingAllParentLinkSet(query, id);
+  }
+
+  @Post('addLink')  
+  addLink(@Body() dto: EditFlexHierachyDto) {
+ 
+    return this.flexValueSetService.addLink(dto);
   }
 
 

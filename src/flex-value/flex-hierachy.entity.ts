@@ -10,16 +10,16 @@ export class FlexHierarchy {
   flexHierarchyId!: number; // int8 → string (recommend)
 
   @Property({ type: 'bigint' })
-  parentFlexValueSetId!: string;
+  parentFlexValueSetId!: number;
 
   @Property({ type: 'bigint' })
-  childFlexValueSetId!: string;
+  childFlexValueSetId!: number;
 
   @Property({ type: 'bigint' })
-  parentFlexValueId!: string;
+  parentFlexValueId!: number;
 
   @Property({ type: 'bigint' })
-  childFlexValueId!: string;
+  childFlexValueId!: number;
 
   @Property({ type: 'varchar', length: 500, nullable: true })
   childValue?: string;

@@ -2,40 +2,31 @@ import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/commo
 import { FlexvalueService } from './flex-value.service';
 import { EditFlexValueDto } from './dto/edit-flex-value.dto';
 import { PagingDto } from 'src/shared/dto/paging.dto';
+import { EditFlexHierachyDto } from 'src/flex-value-set/dto/edit-flex-hierachy.dto';
 
 @Controller('flex-value')
 export class FlexvalueController {
 
 
-  constructor(private readonly flexValueService: FlexvalueService) {}
+  constructor(private readonly flexValueService: FlexvalueService) { }
 
- 
-  @Get('set/:setId') 
-  getBySetId(@Param('setId') setId: number): any {
-  // getBySetId(setId: number): any {
-    return this.flexValueService.getBySetId(setId);
-  }
- 
-  @Get()
-  getPaging(@Query() query: PagingDto) {
-    return this.flexValueService.getPagingFlexValue(query);
-  }
 
-  @Get(':id') 
-  getById(@Param('id') id: number): any {
-  // getBySetId(setId: number): any {
-    return this.flexValueService.getByID(id);
+  // @Get()
+  // getPaging(@Query() query: PagingDto) {
+  //   return this.flexValueService.getPagingFlexValue(query);
+  // }
+
+
+  @Get("getPagingAllForLink/:id")
+  getPagingAllForLink(@Query() query: PagingDto, @Param('id') id: number) {
+    return this.flexValueService.getPagingAllForLink(query, id);
   }
 
 
-  @Post("save")
-  save(@Body() dto: EditFlexValueDto) {
-    return this.flexValueService.save(dto);
-  } 
+  @Post('addLink')
+  addLink(@Body() dto: EditFlexHierachyDto) {
 
-  @Delete(':id') 
-  deleteById(@Param('id') id: number): any {
-    return this.flexValueService.delete(id);
+    return this.flexValueService.addLink(dto);
   }
 
 }

@@ -26,7 +26,7 @@ export class BaseRepository<T> {
   // =========================
   // 🔥 CORE: RAW → ENTITY MAP
   // =========================
-  protected mapRawToEntity(raw: any): T {
+  protected mapRawToEntity<T>(raw: any): T {
     const meta = this.getMeta();
     const mapped: any = {};
 
@@ -73,7 +73,7 @@ export class BaseRepository<T> {
     return mapped as T;
   }
 
-  protected mapRawToEntities(raws: any[]): T[] {
+  protected mapRawToEntities<T>(raws: any[]): T[] {
     return raws.map(r => this.mapRawToEntity(r));
   }
 
@@ -81,6 +81,12 @@ export class BaseRepository<T> {
   // 🔥 RAW QUERY (MAPPED)
   // =========================
   async executeMapped(sql: string, params?: any[]): Promise<T[]> {
+    const raw = await this.em.execute(sql, params);
+    return this.mapRawToEntities(raw);
+  }
+
+  
+  async executeMappedGen<T>(sql: string, params?: any[]): Promise<T[]> {
     const raw = await this.em.execute(sql, params);
     return this.mapRawToEntities(raw);
   }
@@ -190,6 +196,9 @@ export class BaseRepository<T> {
 
 
   //#region map dto
+
+
+
   protected snakeToCamel(str: string): string {
     return str.replace(/_([a-z])/g, (_, char) => char.toUpperCase());
   }
@@ -207,4 +216,75 @@ export class BaseRepository<T> {
 
 
   //#endregion
+
+
+
+
+//#region lấy paging script
+
+async pagingBySql<R = any>(options: {
+  baseSql: string;     // 🔥 FULL SQL (có WHERE sẵn)
+  page: number;
+  pageSize: number;
+  params?: any[];
+  orderBy?: string;    // chỉ tách mỗi ORDER
+}): Promise<PagingResult<R>> {
+
+  const {
+    baseSql,
+    page,
+    pageSize,
+    params = [],
+    orderBy,
+  } = options;
+
+  const offset = (page - 1) * pageSize;
+
+  const orderClause = orderBy ? `ORDER BY ${orderBy}` : '';
+
+  // =========================
+  // 🔥 DATA
+  // =========================
+  const dataSql = `
+    SELECT *
+    FROM (
+      ${baseSql}
+    ) AS base
+    ${orderClause}
+    LIMIT ? OFFSET ?
+  `;
+
+  const data :R[]= await this.em.execute(dataSql, [
+    ...params,
+    pageSize,
+    offset,
+  ]);
+
+  // =========================
+  // 🔥 COUNT
+  // =========================
+  const countSql = `
+    SELECT COUNT(*) as total
+    FROM (
+      ${baseSql}
+    ) AS base
+  `;
+
+  const countResult = await this.em.execute(countSql, params);
+  const total = Number(countResult[0]?.total || 0);
+
+  return {
+    data,
+    meta: {
+      total,
+      page,
+      pageSize,
+    },
+  };
+}
+
+
+//#endregion lấy paging script
+
+
 }

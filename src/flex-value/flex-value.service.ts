@@ -7,113 +7,99 @@ import { EditFlexValueDto } from './dto/edit-flex-value.dto';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { BaseService } from 'src/shared/base.service';
 import { PagingDto } from 'src/shared/dto/paging.dto';
+import { EditFlexHierachyDto } from 'src/flex-value-set/dto/edit-flex-hierachy.dto';
+import { FlexHierarchy } from './flex-hierachy.entity';
+import { FlexHierachyListForSetupDto } from './dto/flex-hierachy-list-for-setup.dto';
 
 @Injectable()
 export class FlexvalueService extends BaseService {
 
   constructor(
-      readonly em: EntityManager,
+    readonly em: EntityManager,
     @InjectRepository(FlexValues)
     private readonly flexvalueRepository: EntityRepository<FlexValues>,
     private readonly flexValuesRepositoryImpl: FlexValuesRepository,
-  ) { 
+  ) {
 
-    
+
     super(em);
   }
- 
-  async getPagingFlexValue(query: PagingDto) {
-    return super.getPaging(
-      FlexValues,
-      {}, // filter
-      query.page,
-      query.pageSize,
-      {
-        orderBy: { flexValueId: 'desc' },
-      }
-    );
-  }
 
-
-  async getBySetId(setId: number): Promise<any> {
-
-    return this.flexValuesRepositoryImpl.getBySetIdRaw(setId);
-    
-
-    return this.flexvalueRepository.find(
-      { flexValueSetId: setId },
-      { orderBy: { flexValueId: 'ASC' } }
-    );
-
-    // return await this.flexvalueRepository.getBySetId(setId);
-  }
-
-  // async getHello(): Promise<any> {
-  //   return await this.flexvalueRepository.findAll();
+  // async getPagingFlexValue(query: PagingDto) {
+  //   return super.getPaging(
+  //     FlexValues,
+  //     {}, // filter
+  //     query.page,
+  //     query.pageSize,
+  //     {
+  //       orderBy: { flexValueId: 'desc' },
+  //     }
+  //   );
   // }
 
-async save(dto: EditFlexValueDto) {
 
-  // 👉 UPDATE
-  if (dto.flexValueId) {
-    const id = dto.flexValueId;
 
-    const entity = await this.em.findOne(FlexValues, { flexValueId: id });
+  addLink(dto: EditFlexHierachyDto) {
 
-    if (!entity) {
-      throw new Error('FlexValue not found');
+    var listAdd = dto.listAddId;
+    var listRemove = dto.listRemoveId;
+    var currentId = dto.currentID;
+
+    if (listAdd && listAdd.length > 0) {
+
+      for (var e of listAdd) {
+        var hierachy = null;
+
+        if (dto.addChild) {
+          hierachy = this.em.create(FlexHierarchy, {
+            childFlexValueId: e,
+            parentFlexValueId: currentId,
+          });
+        }
+        else {
+          hierachy = this.em.create(FlexHierarchy, {
+            childFlexValueId: currentId,
+            parentFlexValueId: e,
+          });
+        }
+
+        this.em.persist(hierachy);
+
+
+      }
     }
 
-    this.em.assign(entity, {
-      flexValueSetId: dto.flexValueSetId,
-      flexValue: dto.flexValue,
-      flexValueName: dto.flexValueName,
-      enableFlag: dto.enableFlag,
-      period: dto.period,
-      description: dto.description,
+    if (listRemove && listRemove.length > 0) {
 
-      editVersion: new Date(),
-      modifiedBy: 'system',
-      modifiedDate: new Date(),
-    });
+      this.em.nativeDelete(FlexHierarchy, {
+        flexHierarchyId: { $in: listRemove },
+      });
 
-    await this.em.flush();
-
-    return entity;
-  }
-
-  // 👉 INSERT
-  const entity = this.em.create(FlexValues, {
-    flexValueSetId: dto.flexValueSetId,
-    flexValue: dto.flexValue,
-    flexValueName: dto.flexValueName,
-    enableFlag: dto.enableFlag,
-    period: dto.period,
-    description: dto.description,
-
-    editVersion: new Date(),
-    createdBy: 'system',
-    createdDate: new Date(),
-  });
-
-  await this.em.persistAndFlush(entity);
-
-  return entity;
-}
-
-
-  async getByID(id: number): Promise<any> {
-    // return (await this.flexValuesRepositoryImpl.getByIdRaw(id)).find((item: any) => item.flexValueSetId === id);
-  }
-  async delete(id: number): Promise<void> {
-    const deleted = await this.em.nativeDelete(FlexValues, {
-      flexValueId: id,
-    });
-
-    if (!deleted) {
-      throw new Error('FlexValueSet not found');
     }
+    //delete
+
+
+    this.em.flush();
   }
 
+
+
+  async getPagingAllForLink(query: PagingDto, id: number) {
+
+    let dataList = await this.flexValuesRepositoryImpl.getPagingAllForLink(query, id);
+
+    //get list checked
+
+    let listCheckChild = await this.flexValuesRepositoryImpl.getHierachyChild(id);
+    let listCheckParent = await this.flexValuesRepositoryImpl.getHierachyParent(id);
+
+    let rs: FlexHierachyListForSetupDto = {};
+
+    rs.listSet = dataList;
+    rs.listChild = listCheckChild;
+    rs.listParent = listCheckParent;
+
+    return rs;
+  }
 
 }
